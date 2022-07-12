@@ -1,6 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import multer from 'multer';
+import cors from 'cors';
 
 // Controllers
 import { UserController, PostController } from './controllers/index.js';
@@ -24,6 +25,9 @@ const app = express();
 
 //* to enable JSON read from requests. Parses incoming JSON requests and puts the parsed data in 'req.body', otherwise 'req.body' is UNDEFINED
 app.use(express.json());
+
+//* Enable CORS on our backend to allow request from anywhere
+app.use(cors());
 
 //* Create storage for images
 const storage = multer.diskStorage({
@@ -74,6 +78,9 @@ app.get('/auth/me', checkAuth, UserController.getMe);
 
 //? GET all posts
 app.get('/posts', PostController.getAll);
+
+//? GET tags
+app.get('/tags', PostController.getLastTags);
 
 //? GET post by ID and update views count
 app.get('/posts/:id', PostController.getOne);
