@@ -14,8 +14,24 @@ export const getAll = async (req, res) => {
 	}
 };
 
-export const getOne = async (req, res) => {
+export const getLastTags = async (req, res) => {
+	try {
+		//* find last 5 posts
+		const posts = await PostModel.find().limit(5).exec();
 
+		//* get all tags from posts, flat all in 1-dimension array and take only last 6, with duplicates removed
+		const tags = [...new Set (posts.map(postObj => postObj.tags).flat())].slice(-6)
+
+		res.json(tags); // return in response json with tags
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({
+			message: 'Can not get tags',
+		});
+	}
+};
+
+export const getOne = async (req, res) => {
 	try {
 		//* extract parameter ':id' from requests
 		const postId = req.params.id; // 'id' == the same var name as after ':', get it from frontend
@@ -134,8 +150,7 @@ export const postUpdate = async (req, res) => {
 		//? route - '/posts/:id/:creator';  http://localhost:4444/posts/62c884b0fae758cb503eea88/62c83d9b2aeafad2aeeeee89
 		//? const postCreator = req.params.creator
 
-
-		// to get the post creator from Post and if requestor and creator are equal - post can be updated 
+		// to get the post creator from Post and if requestor and creator are equal - post can be updated
 		const postCreator = (
 			await PostModel.findOne({
 				_id: postId,
