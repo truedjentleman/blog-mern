@@ -67,7 +67,7 @@ export const getOne = async (req, res) => {
 				// if post exists - just return updated post == doc
 				res.json(doc);
 			}
-		);
+		).populate('user');   // populate 'post' response with 'user' data to send it to client 
 	} catch (error) {
 		console.error(error);
 		res.status(500).json({
@@ -147,6 +147,7 @@ export const postUpdate = async (req, res) => {
 		const postId = req.params.id; // 'id' == the same var name as after ':', get it from frontend
 
 		// TODO:  postCreator can be retrieved from frontend together with :id (post object) and compared with currently authorized user, then no need in additional request
+		//* This will allow to update post only by creator
 		//? route - '/posts/:id/:creator';  http://localhost:4444/posts/62c884b0fae758cb503eea88/62c83d9b2aeafad2aeeeee89
 		//? const postCreator = req.params.creator
 
