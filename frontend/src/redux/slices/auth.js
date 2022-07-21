@@ -7,7 +7,7 @@ export const fetchAuth = createAsyncThunk('/auth/fetchAuth', async (params) => {
 	// backend return its response and if all good it will be saved to REDUX store
 	//* params object (with login and pass) to be used within async action - will pass them to request
 	const { data } = await axios.post('/auth/login', params);
-	console.log(data);
+	// console.log(data); // DEBUG
 	return data;
 });
 
@@ -20,6 +20,15 @@ const initialState = {
 const authSlice = createSlice({
 	name: 'auth',
 	initialState,
+
+	// reducers with actions
+	reducers: {
+		// account logout action
+		logout: (state) => {
+			// console.log(state);   // DEBUG
+			state.data = null;
+		},
+	},
 
 	// to get user info from async action and then save to state (store)
 	extraReducers: {
@@ -47,4 +56,9 @@ const authSlice = createSlice({
 	},
 });
 
+// check if state has Authentication data
+export const selectIsAuth = (state) => Boolean(state.auth.data);
+
 export const authReducer = authSlice.reducer;
+
+export const { logout } = authSlice.actions;
