@@ -60,7 +60,7 @@ app.post('/auth/login-check', loginValidation, UserController.loginCheck);
 //? if there is a request to '/upload' use multer middleware 'upload' and waiting in <Request Body> for property 'image' with some picture
 app.post('/upload', checkAuth, upload.single('image'), (req, res) => {
 	// if all good (picture uploaded) return to client path to uploaded picture
-	console.log(req.file);
+	console.log(req.file); 
 	res.json({
 		url: `/uploads/${req.file.originalname}`,
 	});
