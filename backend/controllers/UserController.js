@@ -133,7 +133,7 @@ export const getMe = async (req, res) => {
 };
 
 export const loginCheck = (req, res) => {
-	console.log(req.body);
+	console.log(req.body); // DEBUG
 
 	// generate token with data to be encode AND the key as a second parameter
 	// key can be ony

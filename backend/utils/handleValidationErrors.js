@@ -5,7 +5,7 @@ import { validationResult } from 'express-validator';
 
 export default (req, res, next) => {
 	const errors = validationResult(req); // get all errors occurred during the validation
-	console.log(errors);
+	// console.log(errors); // DEBUG
 	if (!errors.isEmpty()) {
 		// if there is/are error - return server status '400' and json with these errors
 		return res.status(400).json(errors.array());
