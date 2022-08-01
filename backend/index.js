@@ -72,7 +72,7 @@ app.post('/auth/register', registerValidation, handleValidationErrors, UserContr
 //? POST request for login
 app.post('/auth/login', loginValidation, handleValidationErrors, UserController.login);
 
-//? GET the info about ME (logged in user ), and check if user authorized (checkAuth as a second parameter) before sending GET request
+//? GET the info about ME (logged-in user ), and check if user authorized (checkAuth as a second parameter) before sending GET request
 //? checkAuth is deciding wether is (req,res) should be invoked - the request won't be send unless 'checkAuth' returns result
 app.get('/auth/me', checkAuth, UserController.getMe);
 
