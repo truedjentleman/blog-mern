@@ -3,7 +3,9 @@ import jwt from 'jsonwebtoken';
 //* to check whether user authorized - based on jwt token in request header from frontend (client side)
 //* req - request from client, the same as in app.get('/auth/me'), res 'next' will be
 export default (req, res, next) => {
-	const token = (req.headers.authorization || '').replace(/Bearer\s?/, ''); // from 'req.headers.authorization === auth Bearer token', delete 'Bearer' word in the beginning
+	// when  request is coming from frontend - token is added to req.headers.authorization by frontend
+	const token = (req.headers.authorization || '').replace(/Bearer\s?/, ''); // from 'req.headers.authorization === auth Bearer token', delete 'Bearer' word in the beginning of token if it's there
+	// console.log(req.headers.authorization); // DEBUG
 	//res.send(token)   // Debug
 
 	// if token exists in request we decode it, if not return the error status
