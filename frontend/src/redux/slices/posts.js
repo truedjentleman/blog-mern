@@ -17,6 +17,11 @@ export const fetchTags = createAsyncThunk('posts/fetchTags', async () => {
 	return data;
 });
 
+// action(request) to remove post
+export const fetchRemovePost = createAsyncThunk(
+	'posts/fetchRemovePost',
+	async (id) => await axios.delete(`/posts/${id}`)
+);
 
 const initialState = {
 	posts: {
@@ -34,7 +39,6 @@ const initialState = {
 };
 
 const postSlice = createSlice({
-
 	name: 'posts',
 	initialState,
 	reducers: {
@@ -42,6 +46,7 @@ const postSlice = createSlice({
 	},
 	//? extra reducers to catch states of async actions during requests
 	extraReducers: {
+		//* Getting Posts
 		// if request(action) state is 'pending' in Redux
 		[fetchPosts.pending]: (state) => {
 			// set state.posts.items to [] - reset all posts
@@ -64,19 +69,30 @@ const postSlice = createSlice({
 			state.posts.status = 'error';
 		},
 
-        // action rules for TAGS
-        [fetchTags.pending]: (state) => {
+		//* Getting Tags
+		// action rules for TAGS
+		[fetchTags.pending]: (state) => {
 			state.tags.items = [];
 			state.tags.status = 'loading';
 		},
 		[fetchTags.fulfilled]: (state, action) => {
- 
 			state.tags.items = action.payload;
 			state.tags.status = 'loaded';
 		},
 		[fetchTags.rejected]: (state) => {
 			state.tags.items = [];
 			state.tags.status = 'error';
+		},
+
+		//* Deleting Post
+		// action rules for POST deletion
+		[fetchRemovePost.pending]: (state, action) => {
+			// remove(filter) post from redux-store array, not waiting the response
+			state.posts.items = state.posts.items.filter((obj) => obj._id !== action.meta.arg);
+		},
+		// no need in fulfilled stage as we're removing post on pending stage
+		[fetchRemovePost.rejected]: (state) => {
+			state.posts.status = 'error';
 		},
 	},
 });

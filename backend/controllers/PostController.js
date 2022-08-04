@@ -20,7 +20,7 @@ export const getLastTags = async (req, res) => {
 		const posts = await PostModel.find().limit(5).exec();
 
 		//* get all tags from posts, flat all in 1-dimension array and take only last 6, with duplicates removed
-		const tags = [...new Set (posts.map(postObj => postObj.tags).flat())].slice(-6)
+		const tags = [...new Set(posts.map((postObj) => postObj.tags).flat())].slice(-6);
 
 		res.json(tags); // return in response json with tags
 	} catch (error) {
@@ -51,7 +51,7 @@ export const getOne = async (req, res) => {
 			(err, doc) => {
 				// function defines what to do after getting post and update, doc === post
 				if (err) {
-					console.error(error);
+					console.error(err);
 					return res.status(500).json({
 						message: 'Can not get post',
 					});
@@ -67,7 +67,7 @@ export const getOne = async (req, res) => {
 				// if post exists - just return updated post == doc
 				res.json(doc);
 			}
-		).populate('user');   // populate 'post' response with 'user' data to send it to client 
+		).populate('user'); // populate 'post' response with 'user' data to send it to client
 	} catch (error) {
 		console.error(error);
 		res.status(500).json({
@@ -123,7 +123,7 @@ export const postCreate = async (req, res) => {
 			title: req.body.title,
 			text: req.body.text,
 			imageUrl: req.body.imageUrl,
-			tags: req.body.tags,
+			tags: req.body.tags.split(','), // convert to array - as we get string with commas from frontend
 			user: req.userId, // get from 'checkAuth' (based on auth bearer token), not from client-side
 		});
 
