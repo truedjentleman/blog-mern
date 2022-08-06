@@ -13,6 +13,9 @@ export const Home = () => {
 	//create dispatcher
 	const dispatch = useDispatch();
 
+	// get the User data from storage
+	const userData = useSelector((state) => state.auth.data);
+
 	// extract 'posts' and 'tags' from reducers in Store ('store.js) - reducer 'posts' destructured
 	const { posts, tags } = useSelector((state) => state.posts);
 
@@ -45,14 +48,19 @@ export const Home = () => {
 								key={index}
 								id={postObj._id}
 								title={postObj.title}
-								imageUrl="https://res.cloudinary.com/practicaldev/image/fetch/s--UnAfrEG8--/c_imagga_scale,f_auto,fl_progressive,h_420,q_auto,w_1000/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/icohm5g0axh9wjmu4oc3.png"
-								imageUrl={postObj.imageUrl}
+								// imageUrl="https://res.cloudinary.com/practicaldev/image/fetch/s--UnAfrEG8--/c_imagga_scale,f_auto,fl_progressive,h_420,q_auto,w_1000/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/icohm5g0axh9wjmu4oc3.png"
+								imageUrl={
+									postObj.imageUrl
+										? `http://localhost:4444${postObj.imageUrl}`
+										: ''
+								}
 								user={postObj.user}
 								createdAt={postObj.createdAt}
 								viewsCount={postObj.viewsCount}
 								commentsCount={3}
 								tags={postObj.tags}
-								isEditable
+								/* check if logged-in user is the same as post author - if 'true' post can be edit */
+								isEditable={userData?._id === postObj.user._id}
 							/>
 						)
 					)}
