@@ -25,7 +25,7 @@ export const Login = () => {
 		register,
 		handleSubmit,
 		formState: { errors, isValid },
-		setError,
+		// setError   // to handle validation errors from backend if required
 	} = useForm({
 		defaultValues: {
 			email: 'test@test.com',
@@ -39,7 +39,7 @@ export const Login = () => {
 	const onSubmit = async (values) => {
 		// console.log(values);  // DENUG - auth params from form
 		const data = await dispatch(fetchAuth(values));
-		console.log(data); // DEBUG - get action with response payload
+		// console.log(data); // DEBUG - get action with response payload
 		if (!data.payload) {
 			alert('Authentication failed');
 		}
@@ -79,13 +79,20 @@ export const Login = () => {
 				/>
 				<TextField
 					className={styles.field}
+					type="password"
 					label="Password"
 					error={Boolean(errors.password?.message)}
 					helperText={errors.password?.message}
 					{...register('password', { required: 'Please enter password' })}
 					fullWidth
 				/>
-				<Button type="submit" size="large" variant="contained" fullWidth>
+				<Button
+					disabled={!isValid}
+					type="submit"
+					size="large"
+					variant="contained"
+					fullWidth
+				>
 					Sign In
 				</Button>
 			</form>
