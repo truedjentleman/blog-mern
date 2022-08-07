@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
+
 import axios from '../axios';
 
 import { Post } from '../components/Post';
@@ -14,20 +16,19 @@ export const FullPost = () => {
 	const { id } = useParams();
 	// console.log(id);   // DEBUG
 
-	// Request for one post by ID - no sense to store this in REDUX, so request is performed locally
+	// Request for one post by ID - no sense to store this in REDUX, so request to backend is performed within component
 	useEffect(() => {
 		axios
 			.get(`/posts/${id}`)
 			.then((res) => {
 				setPostData(res.data);
-        setIsLoading(false) // if request is successfully completed
+				setIsLoading(false); // if request is successfully completed
 			})
 			.catch((err) => {
 				console.warn(err);
 				alert('Error while getting post');
 			});
-	}, []);
-
+	}, [id]);
 
 	if (isLoading) {
 		return <Post isLoading={isLoading} isFullPost />;
@@ -38,7 +39,7 @@ export const FullPost = () => {
 			<Post
 				id={postData._id}
 				title={postData.title}
-				imageUrl={postData.imageUrl}
+				imageUrl={postData.imageUrl ? `http://localhost:4444${postData.imageUrl}` : ''}
 				user={postData.user}
 				createdAt={postData.createdAt}
 				viewsCount={postData.viewsCount}
@@ -46,20 +47,20 @@ export const FullPost = () => {
 				tags={postData.tags}
 				isFullPost
 			>
-				<p>{postData.text}</p>
+				<ReactMarkdown children={postData.text} />
 			</Post>
 			<CommentsBlock
 				items={[
 					{
 						user: {
-							fullName: 'Вася Пупкин',
+							fullName: 'John Doe',
 							avatarUrl: 'https://mui.com/static/images/avatar/1.jpg',
 						},
-						text: 'Это тестовый комментарий 555555',
+						text: 'This is test 555555',
 					},
 					{
 						user: {
-							fullName: 'Иван Иванов',
+							fullName: 'Jane Doe',
 							avatarUrl: 'https://mui.com/static/images/avatar/2.jpg',
 						},
 						text: 'When displaying three lines or more, the avatar is not aligned at the top. You should set the prop to align the avatar at the top',
