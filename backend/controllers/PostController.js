@@ -170,7 +170,7 @@ export const postUpdate = async (req, res) => {
 					title: req.body.title,
 					text: req.body.text,
 					imageUrl: req.body.imageUrl,
-					tags: req.body.tags,
+					tags: req.body.tags.split(','), // convert to array - as we get string with commas from frontend
 					user: req.userId, // get from 'checkAuth' (based on auth bearer token), not from client-side
 				}
 			);
