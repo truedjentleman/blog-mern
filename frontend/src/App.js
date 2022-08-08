@@ -28,6 +28,7 @@ function App() {
 				<Routes>
 					<Route path="*" element={<Home />} /> {/* default path */}
 					<Route path="/posts/:id" element={<FullPost />} />
+					<Route path="/posts/:id/edit" element={<AddPost />} />
 					<Route path="/add-post" element={<AddPost />} />
 					<Route path="/login" element={<Login />} />
 					<Route path="/register" element={<Registration />} />
