@@ -1,5 +1,5 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
-import { useNavigate, Navigate } from 'react-router-dom';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useNavigate, Navigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 import TextField from '@mui/material/TextField';
@@ -21,6 +21,9 @@ export const AddPost = () => {
 	const [tags, setTags] = useState('');
 	const [imageUrl, setImageUrl] = useState('');
 
+	// get post id from URL params, when 'edit post' link clicked (edit icon)
+	const { id } = useParams();
+
 	// is data posting to BD ongoing
 	const [loading, setLoading] = useState(false);
 
@@ -32,6 +35,9 @@ export const AddPost = () => {
 
 	// get the 'selectIsAuth' value from storage - authorized or not
 	const isAuth = useSelector(selectIsAuth);
+
+	// variable to define if post in 'editing mode - if 'id' exists return 'true'
+	const isEditing = Boolean(id);
 
 	// after user select the file - to get file from 'inputFileRef' and handle it
 	const handleChangeFile = async (e) => {
@@ -75,19 +81,44 @@ export const AddPost = () => {
 				text,
 			};
 
+			// to check if post in 'editing' or ' creating' state and send corresponding request
 			//extract data from server response
-			const { data } = await axios.post('/posts', fields);
+			//* using post id either from URL params or from server response (DEBUG)
+			const { data } = isEditing
+				? await axios.patch(`/posts/${id}`, fields)
+				: await axios.post('/posts', fields);
 			// console.log(data); // DEBUG
-			const id = data._id;
+			const _id = isEditing ? id : data._id; // post 'id' from server response
 
-			// after post creation we need to get post id from BD and redirect user to page with that post
-			navigate(`/posts/${id}`);
+			// after post creation we need to get post id from DB and redirect user to page with that post
+			navigate(`/posts/${_id}`);
 		} catch (error) {
 			// if posts for some reason not created
 			console.warn(error);
 			alert('An error occurred during post creation');
 		}
 	};
+
+	// Checking if 'id' exist - other words the post in 'editing' mode, not 'creation'
+	// get the post data by 'id'
+	useEffect(() => {
+		if (id) {
+			const getPost = async () => {
+				try {
+					const response = await axios.get(`/posts/${id}`);
+					const { data } = response; // decompose the data from response object
+					setTitle(data.title);
+					setText(data.text);
+					setImageUrl(data.imageUrl);
+					setTags(data.tags.join(',')); // convert to string
+				} catch (err) {
+					console.warn(err);
+					alert('Error during getting post');
+				}
+			};
+			getPost();
+		}
+	}, []);
 
 	const options = useMemo(
 		() => ({
@@ -159,10 +190,10 @@ export const AddPost = () => {
 			/>
 			<div className={styles.buttons}>
 				<Button onClick={onSubmit} size="large" variant="contained">
-					Опубликовать
+					{isEditing ? 'Save' : 'Publish'}
 				</Button>
 				<a href="/">
-					<Button size="large">Отмена</Button>
+					<Button size="large">Cancel</Button>
 				</a>
 			</div>
 		</Paper>
